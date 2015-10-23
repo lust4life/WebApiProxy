@@ -193,7 +193,25 @@ namespace <#= Configuration.Namespace#>.Clients
 													
             throw new WebApiProxyResponseException(response);
 		}
+		/// <summary>
+		///获取对象属性和值的 键值对集合
+		/// </summary>
+		public virtual List<KeyValuePair<string, object>> GenerateGetKeyValueList<T>(T obj) where T :class
+		{
+			List<KeyValuePair<string, object>> kvs = new List<KeyValuePair<string, object>>();
 
+			var type = obj.GetType();
+
+			foreach (var property in type.GetProperties())
+			{
+			    if (property != null)
+			    {
+			        kvs.Add(new KeyValuePair<string,object>(property.Name,property.GetValue(obj, null)));
+			    }
+			}
+
+			return kvs;
+		}
 		public virtual string GenerateQueryStrFromKvList(List<KeyValuePair<string, object>> kvList)
 	    {
             var urlTpl = string.Join("&",
@@ -355,18 +373,11 @@ namespace <#= Configuration.Namespace#>.Clients
 				
 			public virtual string Generate<#= method.Name #>QueryString(string urlQueryString, <#= parameterList#>)
 			{
-				var kvList = Generate<#= method.Name #>KeyValueList( <#=parameterNameList#> );
+				var kvList = GenerateGetKeyValueList( <#=parameterNameList#> );
                 var urlTpl = GenerateQueryStrFromKvList(kvList);
 
         	    return urlTpl;
 			}
-
-			public virtual List<KeyValuePair<string, object>> Generate<#= method.Name #>KeyValueList(<#= parameterList#>)
-			{
-				throw new NotImplementedException();
-			}
-
-
 		<#}#>
 
 
