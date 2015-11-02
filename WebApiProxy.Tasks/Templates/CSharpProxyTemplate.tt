@@ -18,6 +18,7 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using Newtonsoft.Json;
+using log4net;
 using <#= Configuration.Namespace#>.Models;
 
 #region Proxies
@@ -365,8 +366,8 @@ namespace <#= Configuration.Namespace#>.Clients
 				}
 
 			<# } #>
-
-				return await HttpClient.<#=method.Type.ToTitle()#><#= postOrPut ? "AsJson" : "" #>Async<#= postOrPut && method.BodyParameter != null ? "<" + method.BodyParameter.Type + ">" : "" #>(requestUrl <#= postOrPut ? bodyParameterString:""#>).ConfigureAwait(false);
+			             
+			return await HttpClient.<#=method.Type.ToTitle()#><#= postOrPut ? "AsJson" : "" #>Async<#= postOrPut && method.BodyParameter != null ? "<" + method.BodyParameter.Type + ">" : "" #>(requestUrl <#= postOrPut ? bodyParameterString:""#>).ConfigureAwait(false);
 		}
 
 		<# if(hasQueryString && !string.IsNullOrEmpty(queryNoParamUrlTpl)){  #>
@@ -389,8 +390,12 @@ namespace <#= Configuration.Namespace#>.Clients
 <# } #>
 		public virtual <#= String.IsNullOrEmpty(method.ReturnType) ? "void" : method.ReturnType #> <#= method.Name #>(<#= parameterList#>)
 		{
+			ILog loger= LogManager.GetLogger(typeof(<#=definition.Name#><#= Configuration.ClientSuffix#>));
+			DateTime beforDT = System.DateTime.Now;   
 			var result = <#= method.Name #>Async(<#=parameterNameList#>).Result;		 
-			 
+			DateTime afterDT = System.DateTime.Now;
+            TimeSpan ts = afterDT.Subtract(beforDT);	
+			loger.DebugFormat("通过WebAPIProxy完成调用WebApi：baseAddress-[{0}],requesrUrl-[{1}],总共花费{2}ms",HttpClient.BaseAddress,"<#= requestUrl #>", ts.TotalMilliseconds); 
 			EnsureSuccess(result);
 				 
 			<# if(!String.IsNullOrEmpty(method.ReturnType) && method.ReturnType != "void" ) { #>			 			 
