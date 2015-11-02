@@ -19,6 +19,7 @@ using System.Net;
 using System.Web;
 using Newtonsoft.Json;
 using log4net;
+using System.Diagnostics;
 using <#= Configuration.Namespace#>.Models;
 
 #region Proxies
@@ -391,11 +392,11 @@ namespace <#= Configuration.Namespace#>.Clients
 		public virtual <#= String.IsNullOrEmpty(method.ReturnType) ? "void" : method.ReturnType #> <#= method.Name #>(<#= parameterList#>)
 		{
 			ILog loger= LogManager.GetLogger(typeof(<#=definition.Name#><#= Configuration.ClientSuffix#>));
-			DateTime beforDT = System.DateTime.Now;   
+			Stopwatch timer = new Stopwatch();   
+			timer.Start();
 			var result = <#= method.Name #>Async(<#=parameterNameList#>).Result;		 
-			DateTime afterDT = System.DateTime.Now;
-            TimeSpan ts = afterDT.Subtract(beforDT);	
-			loger.DebugFormat("通过WebAPIProxy完成调用WebApi：baseAddress-[{0}],requesrUrl-[{1}],总共花费{2}ms",HttpClient.BaseAddress,"<#= requestUrl #>", ts.TotalMilliseconds); 
+			timer.Stop();	
+			loger.DebugFormat("通过WebAPIProxy完成调用WebApi：baseAddress-[{0}],requesrUrl-[{1}],总共花费{2}ms",HttpClient.BaseAddress,"<#= requestUrl #>", timer.ElapsedMilliseconds); 
 			EnsureSuccess(result);
 				 
 			<# if(!String.IsNullOrEmpty(method.ReturnType) && method.ReturnType != "void" ) { #>			 			 
