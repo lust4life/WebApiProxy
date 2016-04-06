@@ -204,10 +204,7 @@ namespace <#= Configuration.Namespace#>.Clients
 
 		public virtual void EnsureSuccess(HttpResponseMessage response)
 		{			
-			if (response.IsSuccessStatusCode)				
-				return;
-													
-            throw new WebApiProxyResponseException(response);
+			response.EnsureSuccessStatusCode();
 		}
 		
 		public virtual string GenerateQueryStrFromKvList(List<KeyValuePair<string, object>> kvList)

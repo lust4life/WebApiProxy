@@ -581,78 +581,77 @@ using ");
                     "         {\r\n                NullValueHandling = NullValueHandling.Ignore,\r\n     " +
                     "           ReferenceLoopHandling = ReferenceLoopHandling.Serialize,\r\n           " +
                     " };\r\n\t\t}\r\n\r\n        public JsonSerializerSettings SerializationSettings;\r\n\r\n\t\tpu" +
-                    "blic virtual void EnsureSuccess(HttpResponseMessage response)\r\n\t\t{\t\t\t\r\n\t\t\tif (re" +
-                    "sponse.IsSuccessStatusCode)\t\t\t\t\r\n\t\t\t\treturn;\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\r\n            throw n" +
-                    "ew WebApiProxyResponseException(response);\r\n\t\t}\r\n\t\t\r\n\t\tpublic virtual string Gen" +
-                    "erateQueryStrFromKvList(List<KeyValuePair<string, object>> kvList)\r\n\t    {\r\n    " +
-                    "        var urlTpl = string.Join(\"&\",\r\n                             kvList.Selec" +
-                    "t(item =>\r\n                             {\r\n                                 var " +
-                    "queryKey = Uri.EscapeDataString(item.Key);\r\n                                 var" +
-                    " queryValue = string.Empty;\r\n\r\n\t\t\t\t\t\t\t\t if (item.Value != null)\r\n               " +
-                    "                   {\r\n\t\t\t\t\t\t\t\t\t\tif (item.Value is string)\r\n\t\t\t\t\t\t\t\t\t\t{\r\n\t\t\t\t\t\t\t\t" +
-                    "\t\t\tqueryValue = Uri.EscapeDataString((string)item.Value);\r\n\t\t\t\t\t\t\t\t\t\t}\r\n\t\t\t\t\t\t\t\t" +
-                    "\t\telse\r\n\t\t\t\t\t\t\t\t\t\t{\r\n\t\t\t\t\t\t\t\t\t\t\tvar queryValueJson = JsonConvert.SerializeObject" +
-                    "(item.Value,SerializationSettings).Trim(\'\"\');\r\n\t\t\t\t\t\t\t\t\t\t\tqueryValue = Uri.Escap" +
-                    "eDataString(queryValueJson);\r\n\t\t\t\t\t\t\t\t\t\t}\r\n\t\t\t\t\t\t\t      }\r\n                     " +
-                    "            return queryKey + \"=\" + queryValue;\r\n                             })" +
-                    ");\r\n\t        return urlTpl;\r\n\t    }\r\n\r\n\t\t/// <summary>\r\n\t\t/// Releases the unman" +
-                    "aged resources and disposes of the managed resources.       \r\n\t\t/// </summary>\r\n" +
-                    "\t\tpublic void Dispose()\r\n\t\t{\r\n\t\t\tHttpClient.Dispose();\r\n\t\t}\r\n\t}\r\n\r\n");
+                    "blic virtual void EnsureSuccess(HttpResponseMessage response)\r\n\t\t{\t\t\t\r\n\t\t\trespon" +
+                    "se.EnsureSuccessStatusCode();\r\n\t\t}\r\n\t\t\r\n\t\tpublic virtual string GenerateQueryStr" +
+                    "FromKvList(List<KeyValuePair<string, object>> kvList)\r\n\t    {\r\n            var u" +
+                    "rlTpl = string.Join(\"&\",\r\n                             kvList.Select(item =>\r\n  " +
+                    "                           {\r\n                                 var queryKey = Ur" +
+                    "i.EscapeDataString(item.Key);\r\n                                 var queryValue =" +
+                    " string.Empty;\r\n\r\n\t\t\t\t\t\t\t\t if (item.Value != null)\r\n                            " +
+                    "      {\r\n\t\t\t\t\t\t\t\t\t\tif (item.Value is string)\r\n\t\t\t\t\t\t\t\t\t\t{\r\n\t\t\t\t\t\t\t\t\t\t\tqueryValue" +
+                    " = Uri.EscapeDataString((string)item.Value);\r\n\t\t\t\t\t\t\t\t\t\t}\r\n\t\t\t\t\t\t\t\t\t\telse\r\n\t\t\t\t\t" +
+                    "\t\t\t\t\t{\r\n\t\t\t\t\t\t\t\t\t\t\tvar queryValueJson = JsonConvert.SerializeObject(item.Value,S" +
+                    "erializationSettings).Trim(\'\"\');\r\n\t\t\t\t\t\t\t\t\t\t\tqueryValue = Uri.EscapeDataString(q" +
+                    "ueryValueJson);\r\n\t\t\t\t\t\t\t\t\t\t}\r\n\t\t\t\t\t\t\t      }\r\n                                 r" +
+                    "eturn queryKey + \"=\" + queryValue;\r\n                             }));\r\n\t        " +
+                    "return urlTpl;\r\n\t    }\r\n\r\n\t\t/// <summary>\r\n\t\t/// Releases the unmanaged resource" +
+                    "s and disposes of the managed resources.       \r\n\t\t/// </summary>\r\n\t\tpublic void" +
+                    " Dispose()\r\n\t\t{\r\n\t\t\tHttpClient.Dispose();\r\n\t\t}\r\n\t}\r\n\r\n");
             
-            #line 247 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 244 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
  foreach(var definition in Configuration.Metadata.Definitions) { 
             
             #line default
             #line hidden
             this.Write("\t/// <summary>\r\n\t/// ");
             
-            #line 249 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 246 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(definition.Description.ToSummary()));
             
             #line default
             #line hidden
             this.Write("\r\n\t/// </summary>\r\n\tpublic partial class ");
             
-            #line 251 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 248 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(definition.Name));
             
             #line default
             #line hidden
             
-            #line 251 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 248 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Configuration.ClientSuffix));
             
             #line default
             #line hidden
             this.Write(" : ClientBase, Interfaces.I");
             
-            #line 251 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 248 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(definition.Name));
             
             #line default
             #line hidden
             
-            #line 251 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 248 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Configuration.ClientSuffix));
             
             #line default
             #line hidden
             this.Write("\r\n\t{\t\t\r\n\t\tpublic ");
             
-            #line 253 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 250 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(definition.Name));
             
             #line default
             #line hidden
             
-            #line 253 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 250 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Configuration.ClientSuffix));
             
             #line default
             #line hidden
             this.Write("() : base()\r\n\t\t{\r\n\t\t}\r\n\r\n\t\t#region Methods\r\n");
             
-            #line 258 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 255 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
  foreach(var method in definition.ActionMethods) { 
 		var allParameters = method.UrlParameters.AsEnumerable();
 		
@@ -734,112 +733,112 @@ using ");
             #line hidden
             this.Write("\r\n\t\t/// <summary>\r\n\t\t/// ");
             
-            #line 336 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 333 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(method.Description));
             
             #line default
             #line hidden
             this.Write("\r\n\t\t/// </summary>\r\n");
             
-            #line 338 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 335 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
  foreach(var p in method.UrlParameters) { 
             
             #line default
             #line hidden
             this.Write("\t\t/// <param name=\"");
             
-            #line 339 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 336 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(p.Name));
             
             #line default
             #line hidden
             this.Write("\">");
             
-            #line 339 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 336 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(p.Description));
             
             #line default
             #line hidden
             this.Write("</param>\r\n");
             
-            #line 340 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 337 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
  } 
             
             #line default
             #line hidden
             this.Write("\t\tpublic virtual async Task<HttpResponseMessage> ");
             
-            #line 341 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 338 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(method.Name));
             
             #line default
             #line hidden
             this.Write("Async(");
             
-            #line 341 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 338 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(parameterList));
             
             #line default
             #line hidden
             this.Write(")\r\n\t\t{\r\n\t\t\tvar requestUrl = \"");
             
-            #line 343 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 340 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(requestUrl));
             
             #line default
             #line hidden
             this.Write("\";\r\n\t\t\t");
             
-            #line 344 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 341 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
  if(hasQueryString){  
             
             #line default
             #line hidden
             this.Write("\r\n\t\t\t\tvar queryHasParamUrl = \"");
             
-            #line 346 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 343 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(queryHasParamUrl));
             
             #line default
             #line hidden
             this.Write("\";\r\n\r\n\r\n\t\t\t\t");
             
-            #line 349 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 346 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
  if(!string.IsNullOrEmpty(queryNoParamUrlTpl)){  
             
             #line default
             #line hidden
             this.Write("\t\t\t\t\tvar queryNoParamUrlTpl = \"");
             
-            #line 350 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 347 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(queryNoParamUrlTpl));
             
             #line default
             #line hidden
             this.Write("\";\r\n\t\t\t\t\tvar queryNoParamUrl = Generate");
             
-            #line 351 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 348 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(method.Name));
             
             #line default
             #line hidden
             this.Write("QueryString(queryNoParamUrlTpl, ");
             
-            #line 351 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 348 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(parameterNameList));
             
             #line default
             #line hidden
             this.Write(");\r\n\t\t\t\t");
             
-            #line 352 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 349 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
  }else{ 
             
             #line default
             #line hidden
             this.Write("\t\t\t\t\tvar queryNoParamUrl = string.Empty;\r\n\t\t\t\t");
             
-            #line 354 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 351 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
  } 
             
             #line default
@@ -848,69 +847,69 @@ using ");
                     "questUrl + \"?\" + queryNoParamUrl;\r\n\t\t\t\t}\r\n\t\t\t\telse\r\n\t\t\t\t{\r\n\t\t\t\t\trequestUrl = req" +
                     "uestUrl + \"?\" + queryHasParamUrl + \"&\" + queryNoParamUrl;\r\n\t\t\t\t}\r\n\r\n\t\t\t");
             
-            #line 365 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 362 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
  } 
             
             #line default
             #line hidden
             this.Write("\t\t\t             \r\n\t\t\treturn await HttpClient.");
             
-            #line 367 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 364 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(method.Type.ToTitle()));
             
             #line default
             #line hidden
             
-            #line 367 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 364 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(postOrPut ? "AsJson" : ""));
             
             #line default
             #line hidden
             this.Write("Async");
             
-            #line 367 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 364 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(postOrPut && method.BodyParameter != null ? "<" + method.BodyParameter.Type + ">" : ""));
             
             #line default
             #line hidden
             this.Write("(requestUrl ");
             
-            #line 367 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 364 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(postOrPut ? bodyParameterString:""));
             
             #line default
             #line hidden
             this.Write(").ConfigureAwait(false);\r\n\t\t}\r\n\r\n\t\t");
             
-            #line 370 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 367 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
  if(hasQueryString && !string.IsNullOrEmpty(queryNoParamUrlTpl)){  
             
             #line default
             #line hidden
             this.Write("\t\t\t\t\r\n\t\t\tpublic virtual string Generate");
             
-            #line 372 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 369 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(method.Name));
             
             #line default
             #line hidden
             this.Write("QueryString(string urlQueryString, ");
             
-            #line 372 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 369 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(parameterList));
             
             #line default
             #line hidden
             this.Write(")\r\n\t\t\t{\r\n\t\t\t\tvar kvList = Generate");
             
-            #line 374 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 371 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(method.Name));
             
             #line default
             #line hidden
             this.Write("KeyValueList( ");
             
-            #line 374 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 371 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(parameterNameList));
             
             #line default
@@ -919,77 +918,77 @@ using ");
                     "\t    return urlTpl;\r\n\t\t\t}\r\n\r\n\t\t\tpublic virtual List<KeyValuePair<string, object>" +
                     "> Generate");
             
-            #line 380 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 377 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(method.Name));
             
             #line default
             #line hidden
             this.Write("KeyValueList(");
             
-            #line 380 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 377 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(parameterList));
             
             #line default
             #line hidden
             this.Write(")\r\n\t\t\t{\r\n\t\t\t\tthrow new NotImplementedException();\r\n\t\t\t}\r\n\r\n\t\t");
             
-            #line 385 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 382 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
 }
             
             #line default
             #line hidden
             this.Write("\r\n\r\n\t\t/// <summary>\r\n\t\t/// ");
             
-            #line 389 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 386 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(method.Description));
             
             #line default
             #line hidden
             this.Write("\r\n\t\t/// </summary>\r\n");
             
-            #line 391 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 388 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
  foreach(var p in method.UrlParameters) { 
             
             #line default
             #line hidden
             this.Write("\t\t/// <param name=\"");
             
-            #line 392 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 389 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(p.Name));
             
             #line default
             #line hidden
             this.Write("\">");
             
-            #line 392 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 389 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(p.Description));
             
             #line default
             #line hidden
             this.Write("</param>\r\n");
             
-            #line 393 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 390 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
  } 
             
             #line default
             #line hidden
             this.Write("\t\tpublic virtual ");
             
-            #line 394 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 391 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(String.IsNullOrEmpty(method.ReturnType) ? "void" : method.ReturnType));
             
             #line default
             #line hidden
             this.Write(" ");
             
-            #line 394 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 391 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(method.Name));
             
             #line default
             #line hidden
             this.Write("(");
             
-            #line 394 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 391 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(parameterList));
             
             #line default
@@ -997,14 +996,14 @@ using ");
             this.Write(")\r\n\t\t{\r\n\t\t\tStopwatch timer = new Stopwatch();   \r\n\t\t\ttimer.Start();\r\n\t\t\tvar resul" +
                     "t = ");
             
-            #line 398 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 395 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(method.Name));
             
             #line default
             #line hidden
             this.Write("Async(");
             
-            #line 398 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 395 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(parameterNameList));
             
             #line default
@@ -1012,42 +1011,42 @@ using ");
             this.Write(").Result;\t\t \r\n\t\t\ttimer.Stop();\t\r\n\t\t\tTrace.TraceInformation(\"通过WebAPIProxy完成调用WebA" +
                     "pi：baseAddress-[{0}],requesrUrl-[{1}],总共花费{2}ms\",HttpClient.BaseAddress,\"");
             
-            #line 400 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 397 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(requestUrl));
             
             #line default
             #line hidden
             this.Write("\", timer.ElapsedMilliseconds); \r\n\t\t\tEnsureSuccess(result);\r\n\t\t\t\t \r\n\t\t\t");
             
-            #line 403 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 400 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
  if(!String.IsNullOrEmpty(method.ReturnType) && method.ReturnType != "void" ) { 
             
             #line default
             #line hidden
             this.Write("\t\t\t \t\t\t \r\n\t\t\treturn result.Content.ReadAsAsync<");
             
-            #line 404 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 401 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(method.ReturnType));
             
             #line default
             #line hidden
             this.Write(">().Result;\r\n\t\t\t");
             
-            #line 405 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 402 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
  } 
             
             #line default
             #line hidden
             this.Write("\t\t}\r\n\r\n");
             
-            #line 408 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 405 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
 }
             
             #line default
             #line hidden
             this.Write("\t\t#endregion\r\n\t}\r\n");
             
-            #line 411 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 408 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
  } 
             
             #line default
