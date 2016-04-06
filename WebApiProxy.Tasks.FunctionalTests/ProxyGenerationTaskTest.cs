@@ -9,7 +9,7 @@ namespace WebApiProxy.Tasks.FunctionalTests
         public void Execute_WebApiUrl_ClientGenerated()
         {
             var target = new ProxyGenerationTask();
-            target.Filename = "test.cs";
+            target.Filename = "test1.cs";
             target.Execute();
         }
     }

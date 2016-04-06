@@ -23,6 +23,11 @@ namespace WebApiProxy.Core.Models
 
         public IEnumerable<ConstantDefinition> Constants { get; set; }
         public IEnumerable<ModelProperty> Properties { get; set; }
+        /// <summary>
+        /// get customattribute
+        /// </summary>
+        public IEnumerable<string> CustomAttributes { get; set; }
+        
         #endregion
 
         #region Methods

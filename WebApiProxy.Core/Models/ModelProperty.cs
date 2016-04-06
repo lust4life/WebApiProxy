@@ -1,4 +1,6 @@
-﻿namespace WebApiProxy.Core.Models
+﻿using System.Collections.Generic;
+
+namespace WebApiProxy.Core.Models
 {
     /// <summary>
     /// Represents a property.
@@ -28,5 +30,10 @@
         /// The type.
         /// </value>
         public string Type { get; set; }
+
+        /// <summary>
+        /// get customattributes
+        /// </summary>
+        public IEnumerable<string> CustomAttributes { get; set; }
     }
 }

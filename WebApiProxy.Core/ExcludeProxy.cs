@@ -4,5 +4,6 @@ namespace WebApiProxy
 {
     public class ExcludeProxy : Attribute
     {
+
     }
 }

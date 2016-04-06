@@ -30,7 +30,7 @@ namespace WebApiProxy.Server
             var host = request.RequestUri.Scheme + "://" + request.RequestUri.Authority;
             var descriptions = config.Services.GetApiExplorer().ApiDescriptions;
             var documentationProvider = config.Services.GetDocumentationProvider();
-
+           
             ILookup<HttpControllerDescriptor, ApiDescription> apiGroups = descriptions
                 .Where(a => !a.ActionDescriptor.ControllerDescriptor.ControllerType.IsAbstract
                     && !a.RelativePath.Contains("Swagger")
@@ -209,6 +209,7 @@ namespace WebApiProxy.Server
                     model.Name = GetGenericTypeDefineRepresentation(classToDef.GetGenericTypeDefinition());
                 }
                 model.Type = classToDef.IsEnum ? "enum" : "class";
+                model.CustomAttributes = GetCustomAttributes(classToDef);
                 var constants = classToDef
                     .GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy)
                     .Where(f => f.IsLiteral && !f.IsInitOnly)
@@ -219,9 +220,9 @@ namespace WebApiProxy.Server
                                       Name = constant.Name,
                                       Type = ParseType(constant.FieldType),
                                       Value = GetConstantValue(constant),
-                                      Description = GetDescription(constant)
+                                      Description = GetDescription(constant),
+                                      CustomAttributes = GetCustomAttributes(constant)
                                   };
-
                 var properties = classToDef.IsGenericType
                                      ? classToDef.GetGenericTypeDefinition().GetProperties()
                                      : classToDef.GetProperties();
@@ -231,8 +232,9 @@ namespace WebApiProxy.Server
                                           {
                                               Name = property.Name,
                                               Type = ParseType(property.PropertyType, model),
-                                              Description = GetDescription(property)
-                                          };
+                                              Description = GetDescription(property),
+                                              CustomAttributes = GetCustomAttributes(property)
+                                   };
                 AddTypeToIgnore(model.Name);
                 foreach (var p in properties)
                 {
@@ -255,6 +257,20 @@ namespace WebApiProxy.Server
             }
         }
 
+        private static IEnumerable<string> GetCustomAttributes(MemberInfo memberInfo)
+        {
+            if (memberInfo == (MemberInfo)null)
+                throw new ArgumentNullException("memberInfo");
+            return memberInfo.GetCustomAttributesData().Select(t => t.ToString()).ToList();
+          
+        }
+
+        private static IEnumerable<string> GetCustomAttributes(Type type)
+        {
+            if (type == (MemberInfo)null)
+                throw new ArgumentNullException("type");
+            return type.GetCustomAttributesData().Select(t => t.ToString()).ToList();
+        }
         private string GetConstantValue(FieldInfo constant)
         {
             var value = constant.GetRawConstantValue().ToString();

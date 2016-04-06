@@ -59,6 +59,9 @@ namespace <#= Configuration.Namespace#>.Models
 	/// <summary>
 	/// <#= model.Description.ToSummary() #>
 	/// </summary>
+	<# foreach(var attr in model.CustomAttributes) { #>
+	<#= attr #>
+	<#}#>
 	public partial class <#=model.Name#>
 	{
 		#region Constants
@@ -75,6 +78,9 @@ namespace <#= Configuration.Namespace#>.Models
 		/// <summary>
 		/// <#= propertyItem.Description.ToSummary() #>
 		/// </summary>
+		<# foreach(var attr in propertyItem.CustomAttributes) { #>
+		<#= attr #>
+		<#}#>
 		public virtual <#= propertyItem.Type #> <#= propertyItem.Name #> { get; set; }
 <#}#>
 		#endregion
@@ -85,15 +91,21 @@ namespace <#= Configuration.Namespace#>.Models
 	/// <summary>
 	/// <#= model.Description.ToSummary() #>
 	/// </summary>
+	<# foreach(var attr in model.CustomAttributes) { #>
+	<#=attr #>
+	<#}#>
 	public enum <#=model.Name#>
 	{
-<# foreach(var constantItem in model.Constants) { #>
+	<# foreach(var constantItem in model.Constants) { #>
 
-		/// <summary>
-		/// <#= constantItem.Description.ToSummary() #>
-		/// </summary>
-		<#= constantItem.Name #> = <#= constantItem.Value #>,
-<#}#>		
+			/// <summary>
+			/// <#= constantItem.Description.ToSummary() #>
+			/// </summary>
+			<# foreach(var attr in constantItem.CustomAttributes) { #>
+			<#= attr #>
+			<#}#>
+			<#= constantItem.Name #> = <#= constantItem.Value #>,
+	<#}#>		
 	}
 <#}#>
 	
