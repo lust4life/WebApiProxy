@@ -59,9 +59,9 @@ namespace <#= Configuration.Namespace#>.Models
 	/// <summary>
 	/// <#= model.Description.ToSummary() #>
 	/// </summary>
-	<# foreach(var attr in model.CustomAttributes) { #>
+<# foreach(var attr in model.CustomAttributes) { #>
 	<#= attr #>
-	<#}#>
+<#}#>
 	public partial class <#=model.Name#>
 	{
 		#region Constants
@@ -69,7 +69,10 @@ namespace <#= Configuration.Namespace#>.Models
 		/// <summary>
 		/// <#= constantItem.Description.ToSummary() #>
 		/// </summary>
-		public const <#= constantItem.Type #> <#= constantItem.Name #> = <#= constantItem.Value #>;
+	<# foreach(var attr in constantItem.CustomAttributes) { #>
+	<#= attr #>
+	<#}#>
+	public const <#= constantItem.Type #> <#= constantItem.Name #> = <#= constantItem.Value #>;
 <#}#>
 		#endregion
 
@@ -78,10 +81,10 @@ namespace <#= Configuration.Namespace#>.Models
 		/// <summary>
 		/// <#= propertyItem.Description.ToSummary() #>
 		/// </summary>
-		<# foreach(var attr in propertyItem.CustomAttributes) { #>
-		<#= attr #>
-		<#}#>
-		public virtual <#= propertyItem.Type #> <#= propertyItem.Name #> { get; set; }
+	<# foreach(var attr in propertyItem.CustomAttributes) { #>
+	<#= attr #>
+	<#}#>
+	public virtual <#= propertyItem.Type #> <#= propertyItem.Name #> { get; set; }
 <#}#>
 		#endregion
 	}	
@@ -91,9 +94,9 @@ namespace <#= Configuration.Namespace#>.Models
 	/// <summary>
 	/// <#= model.Description.ToSummary() #>
 	/// </summary>
-	<# foreach(var attr in model.CustomAttributes) { #>
+<# foreach(var attr in model.CustomAttributes) { #>
 	<#=attr #>
-	<#}#>
+<#}#>
 	public enum <#=model.Name#>
 	{
 	<# foreach(var constantItem in model.Constants) { #>
@@ -101,10 +104,10 @@ namespace <#= Configuration.Namespace#>.Models
 			/// <summary>
 			/// <#= constantItem.Description.ToSummary() #>
 			/// </summary>
-			<# foreach(var attr in constantItem.CustomAttributes) { #>
-			<#= attr #>
-			<#}#>
-			<#= constantItem.Name #> = <#= constantItem.Value #>,
+	 <# foreach(var attr in constantItem.CustomAttributes) { #>
+		<#= attr #>
+	 <#}#>
+		<#= constantItem.Name #> = <#= constantItem.Value #>,
 	<#}#>		
 	}
 <#}#>
