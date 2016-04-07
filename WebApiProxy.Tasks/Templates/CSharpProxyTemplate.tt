@@ -45,12 +45,13 @@ namespace <#= Configuration.Namespace#>.Models
  public class WebApiProxyResponseException : Exception
   {
 
-    public HttpResponseMessage Response { get; private set; }
+		public HttpStatusCode StatusCode { get; private set; }
+		public string Content { get; private set; }
 
-
-    public WebApiProxyResponseException(HttpResponseMessage response): base("A " + response.StatusCode + " (" + (int)response.StatusCode + ") http exception occured. See response.")
+		public WebApiProxyResponseException(HttpStatusCode statusCode, string content) : base("A " + statusCode + " (" + (int)statusCode + ") http exception occured. See Content for response body.")
 		{
-			Response = response;
+			StatusCode = statusCode;
+			Content = content;
 		}
 	}
 
@@ -204,7 +205,11 @@ namespace <#= Configuration.Namespace#>.Clients
 
 		public virtual void EnsureSuccess(HttpResponseMessage response)
 		{			
-			response.EnsureSuccessStatusCode();
+			if (response.IsSuccessStatusCode)				
+				return;
+													
+			var content = response.Content.ReadAsStringAsync().Result;
+			throw new WebApiProxyResponseException(response.StatusCode, content);
 		}
 		
 		public virtual string GenerateQueryStrFromKvList(List<KeyValuePair<string, object>> kvList)
