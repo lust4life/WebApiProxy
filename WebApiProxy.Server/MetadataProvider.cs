@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Reflection;
+using System.Text;
 using System.Web.Http;
 using System.Web.Http.Controllers;
 using System.Web.Http.Description;
@@ -257,20 +258,125 @@ namespace WebApiProxy.Server
             }
         }
 
-        private static IEnumerable<string> GetCustomAttributes(MemberInfo memberInfo)
-        {
-            if (memberInfo == (MemberInfo)null)
-                throw new ArgumentNullException("memberInfo");
-            return memberInfo.GetCustomAttributesData().Select(t => t.ToString()).ToList();
-          
-        }
-
         private static IEnumerable<string> GetCustomAttributes(Type type)
         {
-            if (type == (MemberInfo)null)
+
+            var result = new List<string>();
+            if (type == (Type)null)
                 throw new ArgumentNullException("type");
-            return type.GetCustomAttributesData().Select(t => t.ToString()).ToList();
+            var metadatas = type.GetCustomAttributesData();
+            foreach (var attr in metadatas)
+            {
+                var sb = new StringBuilder();
+                sb.Append("[");
+                sb.Append(attr.AttributeType.FullName);
+                sb.Append("(");
+                HandleConstructorArguments(attr.ConstructorArguments, sb);
+                HandleNamedArguments(attr.NamedArguments, sb);
+                sb.Append(")]");
+
+                result.Add(sb.ToString());
+            }
+
+            return result;
         }
+        private static IEnumerable<string> GetCustomAttributes(MemberInfo memberInfo)
+        {
+
+            var result = new List<string>();
+            if (memberInfo == (MemberInfo)null)
+                throw new ArgumentNullException("memberInfo");
+            var metadatas = memberInfo.GetCustomAttributesData();
+            foreach (var attr in metadatas)
+            {
+                var sb = new StringBuilder();
+                sb.Append("[");
+                sb.Append(attr.AttributeType.FullName);
+                sb.Append("(");
+                HandleConstructorArguments(attr.ConstructorArguments, sb);
+                HandleNamedArguments(attr.NamedArguments, sb);
+                sb.Append(")]");
+
+                result.Add(sb.ToString());
+            }
+
+            return result;
+        }
+        private static void HandleConstructorArguments(IList<CustomAttributeTypedArgument> arguments, StringBuilder sb)
+        {
+            if (arguments.Count > 0)
+            {
+                var constructorValue = new List<string>();
+                foreach (var argument in arguments)
+                {
+                    if (argument.ArgumentType.Name.Equals("Boolean", StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        constructorValue.Add(string.Format("{0}", argument.Value.ToString().ToLower()));
+                    }
+                    else if (argument.ArgumentType.Name.Equals("String", StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        constructorValue.Add(string.Format("\"{0}\"", argument.Value));
+                    }
+                    else if (argument.ArgumentType.BaseType != null && argument.ArgumentType.BaseType.Name.Equals("Enum", StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        constructorValue.Add(string.Format("({0}){1}", argument.ArgumentType.Name, argument.Value));
+                    }
+                    else if (argument.ArgumentType.Name.Equals("Type", StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        constructorValue.Add(string.Format("typeof({0})", argument.Value));
+                    }
+                    else
+                    {
+                        if (argument.ArgumentType.BaseType != null && !argument.ArgumentType.BaseType.Name.Equals("Class", StringComparison.CurrentCultureIgnoreCase))
+                        {
+                            //不支持Class 复杂类型
+                            constructorValue.Add(string.Format("{0}", argument.Value));
+                        }
+
+                    }
+
+                }
+                sb.Append(string.Join(",", constructorValue));
+            }
+        }
+        private static void HandleNamedArguments(IList<CustomAttributeNamedArgument> arguments, StringBuilder sb)
+        {
+            if (arguments.Count > 0)
+            {
+                var nameValue = new List<string>();
+                foreach (var argument in arguments)
+                {
+                    if (argument.TypedValue.ArgumentType.Name.Equals("Boolean", StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        nameValue.Add(string.Format("{0}={1}", argument.MemberInfo.Name, argument.TypedValue.Value.ToString().ToLower()));
+                    }
+                    else if (argument.TypedValue.ArgumentType.Name.Equals("String", StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        nameValue.Add(string.Format("{0}=\"{1}\"", argument.MemberInfo.Name, argument.TypedValue.Value));
+                    }
+                    else if (argument.TypedValue.ArgumentType.BaseType != null && argument.TypedValue.ArgumentType.BaseType.Name.Equals("Enum", StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        nameValue.Add(string.Format("{0}=({1}){2}", argument.MemberInfo.Name, argument.TypedValue.ArgumentType.Name, argument.TypedValue.Value));
+                    }
+                    else if (argument.TypedValue.ArgumentType.Name.Equals("Type", StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        nameValue.Add(string.Format("{0}=typeof({1})", argument.MemberInfo.Name, argument.TypedValue.Value));
+                    }
+                    else
+                    {
+                        if (argument.TypedValue.ArgumentType.BaseType != null && !argument.TypedValue.ArgumentType.BaseType.Name.Equals("Class", StringComparison.CurrentCultureIgnoreCase))
+                        {
+                            //不支持Class 复杂类型
+                            nameValue.Add(string.Format("{0}={1}", argument.MemberInfo.Name, argument.TypedValue.Value));
+                        }
+
+                    }
+
+                }
+                sb.Append(string.Join(",", nameValue));
+            }
+        }
+
         private string GetConstantValue(FieldInfo constant)
         {
             var value = constant.GetRawConstantValue().ToString();
