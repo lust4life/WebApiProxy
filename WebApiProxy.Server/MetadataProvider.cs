@@ -319,7 +319,7 @@ namespace WebApiProxy.Server
                     }
                     else if (argument.ArgumentType.BaseType != null && argument.ArgumentType.BaseType.Name.Equals("Enum", StringComparison.CurrentCultureIgnoreCase))
                     {
-                        constructorValue.Add(string.Format("({0}){1}", argument.ArgumentType.Name, argument.Value));
+                        constructorValue.Add(string.Format("({0}){1}", argument.ArgumentType.FullName, argument.Value));
                     }
                     else if (argument.ArgumentType.Name.Equals("Type", StringComparison.CurrentCultureIgnoreCase))
                     {
@@ -356,7 +356,7 @@ namespace WebApiProxy.Server
                     }
                     else if (argument.TypedValue.ArgumentType.BaseType != null && argument.TypedValue.ArgumentType.BaseType.Name.Equals("Enum", StringComparison.CurrentCultureIgnoreCase))
                     {
-                        nameValue.Add(string.Format("{0}=({1}){2}", argument.MemberInfo.Name, argument.TypedValue.ArgumentType.Name, argument.TypedValue.Value));
+                        nameValue.Add(string.Format("{0}=({1}){2}", argument.MemberInfo.Name, argument.TypedValue.ArgumentType.FullName, argument.TypedValue.Value));
                     }
                     else if (argument.TypedValue.ArgumentType.Name.Equals("Type", StringComparison.CurrentCultureIgnoreCase))
                     {
