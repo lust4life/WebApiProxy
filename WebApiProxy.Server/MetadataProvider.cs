@@ -272,6 +272,10 @@ namespace WebApiProxy.Server
                 sb.Append(attr.AttributeType.FullName);
                 sb.Append("(");
                 HandleConstructorArguments(attr.ConstructorArguments, sb);
+                if (attr.ConstructorArguments.Count > 0 && attr.NamedArguments.Count > 0)
+                {
+                    sb.Append(",");
+                }
                 HandleNamedArguments(attr.NamedArguments, sb);
                 sb.Append(")]");
 
@@ -294,6 +298,10 @@ namespace WebApiProxy.Server
                 sb.Append(attr.AttributeType.FullName);
                 sb.Append("(");
                 HandleConstructorArguments(attr.ConstructorArguments, sb);
+                if (attr.ConstructorArguments.Count > 0 && attr.NamedArguments.Count > 0)
+                {
+                    sb.Append(",");
+                }
                 HandleNamedArguments(attr.NamedArguments, sb);
                 sb.Append(")]");
 
