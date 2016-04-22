@@ -164,7 +164,16 @@ namespace <#= Configuration.Namespace#>.Interfaces
 		/// <param name="<#= p.Name #>"><#= p.Description #></param>
 <# } #>
 		<#= String.IsNullOrEmpty(method.ReturnType) ? "void" : method.ReturnType #> <#= method.Name #>(<#= parameterList#>);
-<#}#>				
+
+		/// <summary>
+		/// <#= method.Description #>
+		/// </summary>
+<# foreach(var p in method.UrlParameters) {#>
+		/// <param name="<#= p.Name #>"><#= p.Description #></param>
+<# } #>
+		<#= String.IsNullOrEmpty(method.ReturnType) ? "void" : "Task<"+method.ReturnType+">" #> <#= method.Name #>TaskAsync(<#= parameterList#>);
+<#}#>
+		
 	}
 <#}#>
 
@@ -407,6 +416,24 @@ namespace <#= Configuration.Namespace#>.Clients
 			<# } #>
 		}
 
+		/// <summary>
+		/// <#= method.Description #>
+		/// </summary>
+<# foreach(var p in method.UrlParameters) { #>
+		/// <param name="<#= p.Name #>"><#= p.Description #></param>
+<# } #>
+		public virtual async <#= String.IsNullOrEmpty(method.ReturnType) ? "void" : "Task<"+method.ReturnType+">" #> <#= method.Name #>TaskAsync(<#= parameterList#>)
+		{
+			Stopwatch timer = new Stopwatch();   
+			timer.Start();
+			var result =await <#= method.Name #>Async(<#=parameterNameList#>);		 
+			timer.Stop();	
+			Trace.TraceInformation("通过WebAPIProxy完成调用WebApi：baseAddress-[{0}],requesrUrl-[{1}],总共花费{2}ms",HttpClient.BaseAddress,"<#= requestUrl #>", timer.ElapsedMilliseconds); 
+			EnsureSuccess(result);		 
+			<# if(!String.IsNullOrEmpty(method.ReturnType) && method.ReturnType != "void" ) { #>			 			 
+			return await result.Content.ReadAsAsync<<#= method.ReturnType #>>();
+			<# } #>
+		}
 <#}#>
 		#endregion
 	}
