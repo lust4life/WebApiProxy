@@ -393,21 +393,33 @@ namespace WebApiProxy.Server
 
         private static string GetDescription(MemberInfo member)
         {
-            var xml = DocsService.GetXmlFromMember(member, false);
-            if (xml != null)
+            try
             {
-                return xml.InnerText.Trim();
+                var xml = DocsService.GetXmlFromMember(member, false);
+                if (xml != null)
+                {
+                    return xml.InnerText.Trim();
+                }
+            }
+            catch (Exception)
+            {
             }
             return String.Empty;
         }
 
         private static string GetDescription(Type type)
         {
-            var xml = DocsService.GetXmlFromType(type, false);
-
-            if (xml != null)
+            try
             {
-                return xml.InnerText.Trim();
+                var xml = DocsService.GetXmlFromType(type, false);
+
+                if (xml != null)
+                {
+                    return xml.InnerText.Trim();
+                }
+            }
+            catch (Exception)
+            {
             }
             return String.Empty;
         }
