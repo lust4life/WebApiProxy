@@ -569,7 +569,7 @@ using ");
             this.Write("\t\t");
             
             #line 174 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(String.IsNullOrEmpty(method.ReturnType) ? "void" : "Task<"+method.ReturnType+">"));
+            this.Write(this.ToStringHelper.ToStringWithCulture(String.IsNullOrEmpty(method.ReturnType)||method.ReturnType=="void" ? "void" : "Task<"+method.ReturnType+">"));
             
             #line default
             #line hidden
@@ -1134,7 +1134,7 @@ using ");
             this.Write("\t\tpublic virtual async ");
             
             #line 425 "F:\UOKOWorkspace\Git\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(String.IsNullOrEmpty(method.ReturnType) ? "void" : "Task<"+method.ReturnType+">"));
+            this.Write(this.ToStringHelper.ToStringWithCulture(String.IsNullOrEmpty(method.ReturnType)||method.ReturnType=="void"  ? "void" : "Task<"+method.ReturnType+">"));
             
             #line default
             #line hidden

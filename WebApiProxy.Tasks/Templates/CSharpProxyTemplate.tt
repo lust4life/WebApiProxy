@@ -171,7 +171,7 @@ namespace <#= Configuration.Namespace#>.Interfaces
 <# foreach(var p in method.UrlParameters) {#>
 		/// <param name="<#= p.Name #>"><#= p.Description #></param>
 <# } #>
-		<#= String.IsNullOrEmpty(method.ReturnType) ? "void" : "Task<"+method.ReturnType+">" #> <#= method.Name #>TaskAsync(<#= parameterList#>);
+		<#= String.IsNullOrEmpty(method.ReturnType)||method.ReturnType=="void" ? "void" : "Task<"+method.ReturnType+">" #> <#= method.Name #>TaskAsync(<#= parameterList#>);
 <#}#>
 		
 	}
@@ -422,7 +422,7 @@ namespace <#= Configuration.Namespace#>.Clients
 <# foreach(var p in method.UrlParameters) { #>
 		/// <param name="<#= p.Name #>"><#= p.Description #></param>
 <# } #>
-		public virtual async <#= String.IsNullOrEmpty(method.ReturnType) ? "void" : "Task<"+method.ReturnType+">" #> <#= method.Name #>TaskAsync(<#= parameterList#>)
+		public virtual async <#= String.IsNullOrEmpty(method.ReturnType)||method.ReturnType=="void"  ? "void" : "Task<"+method.ReturnType+">" #> <#= method.Name #>TaskAsync(<#= parameterList#>)
 		{
 			Stopwatch timer = new Stopwatch();   
 			timer.Start();
