@@ -5,6 +5,7 @@ namespace WebApiProxy.Tasks.Models
 {
     public class GenerateConfig
     {
+        public string ConsulEndpoint { get; set; }
         public bool GenerateOnBuild { get; set; }
         public bool GenerateAsyncReturnTypes { get; set; }
 
@@ -33,6 +34,7 @@ namespace WebApiProxy.Tasks.Models
         {
             return Services.Select(service => new Configuration
                                               {
+                                                  ConsulEndpoint = ConsulEndpoint,
                                                   GenerateOnBuild = GenerateOnBuild,
                                                   GenerateAsyncReturnTypes = GenerateAsyncReturnTypes,
                                                   Endpoint = service.ProxyEndpoint,

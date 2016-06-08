@@ -1,18 +1,17 @@
 ﻿{
-    "GenerateOnBuild": true,
-    "GenerateAsyncReturnTypes": true,
-    "Services": [
-        {
-            "ProxyEndpoint": "http://localhost:12016/api/proxies",
-            "Namespace": "WebApi.Proxies",
-            "Name": "TestProxy",
-            "ClientSuffix": "Client"
-        },
-        {
-            "ProxyEndpoint": "http://localhost:12016/api/proxies",
-            "Namespace": "WebApi.Proxies",
-            "Name": "AnotherTestProxy",
-            "ClientSuffix": "Client"
-        }
-    ]
+  "GenerateOnBuild": true,
+  "GenerateAsyncReturnTypes": true,
+  "ConsulEndpoint": "http://192.168.200.22:8500/",
+  "Services": [
+    {
+      "Name": "Foo",
+      "Namespace": "WebApi.Proxies.Foo",
+      "ClientSuffix": "Client"
+    },
+    {
+      "Name": "Bar",
+      "Namespace": "WebApi.Proxies.Bar",
+      "ClientSuffix": "Client"
+    }
+  ]
 }

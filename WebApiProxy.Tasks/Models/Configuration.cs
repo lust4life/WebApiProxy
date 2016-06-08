@@ -15,6 +15,10 @@ namespace WebApiProxy.Tasks.Models
         private string _namespace = "WebApi.Proxies";
         private bool _generateAsyncReturnTypes = false;
 
+        [XmlIgnore]
+        public string ConsulEndpoint { get; set; }  
+
+
         [XmlAttribute("generateOnBuild")]
         public bool GenerateOnBuild
         {
