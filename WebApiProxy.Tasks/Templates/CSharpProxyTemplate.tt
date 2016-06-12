@@ -18,10 +18,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using System.Net.Http.Formatting;
 using System.Linq;
-using System.Net;
-using System.Web;
 using Newtonsoft.Json;
 using WebApiProxy.Tasks.Models;
 using <#= Configuration.Namespace#>.Models;
@@ -38,7 +35,20 @@ namespace <#= Configuration.Namespace#>
 		/// <summary>
 		/// Web Api Base Address.
 		/// </summary>
-		public static string <#= Configuration.Name #>BaseAddress = "<#= MetaData.Host #>";
+		public static string <#= Configuration.Name #>BaseAddress
+		{
+	        get
+	        {
+	            string address;
+	            BaseAddressInfo.Infos.TryGetValue(ServiceName, out address);
+	            return string.IsNullOrEmpty(address) ? OriginBaseAddr : address;
+	        }
+	    } 
+
+		
+	    public static string OriginBaseAddr = "<#= MetaData.Host #>";
+
+		public static string ServiceName = "<#= Configuration.Name #>";
 	}
 }
 #endregion
@@ -314,7 +324,7 @@ namespace <#= Configuration.Namespace#>.Clients
 		public WebApiClients(Uri baseAddress = null)
 		{
             if (baseAddress != null)
-                Configuration.<#= Configuration.Name #>BaseAddress = baseAddress.AbsoluteUri;
+                Configuration.OriginBaseAddr = baseAddress.AbsoluteUri;
 
 <# foreach(var definition in MetaData.Definitions) { #>
 			<#= definition.Name #> = new <#=definition.Name#><#= Configuration.ClientSuffix#>();
