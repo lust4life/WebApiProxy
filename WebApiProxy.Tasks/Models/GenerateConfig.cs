@@ -35,7 +35,7 @@ namespace WebApiProxy.Tasks.Models
             return Services.Select(service => new Configuration
                                               {
                                                   ConsulEndpoint = ConsulEndpoint,
-                                                  GenerateOnBuild = GenerateOnBuild,
+                                                  GenerateOnBuild = true,
                                                   GenerateAsyncReturnTypes = GenerateAsyncReturnTypes,
                                                   Endpoint = service.ProxyEndpoint,
                                                   ClientSuffix = service.ClientSuffix,
