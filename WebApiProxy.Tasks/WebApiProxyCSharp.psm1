@@ -10,7 +10,7 @@
 
 		Add-Type -Path $taskPath
 
-		$task = New-Object WebApiProxy.Tasks.ProxyGenerationTask
+		$task = New-Object WebApiProxy.Tasks.ProxyGenerationTask -ArgumentList ""
 		$task.Root = $root
 		$task.Execute()
 

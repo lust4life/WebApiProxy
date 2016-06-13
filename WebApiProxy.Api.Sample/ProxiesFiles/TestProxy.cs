@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using System.Net.Http.Formatting;
 using System.Linq;
 using System.Net;
+using System.Net.Sockets;
 using System.Web;
 using Newtonsoft.Json;
 using WebApiProxy.Tasks.Models;
@@ -263,21 +264,18 @@ namespace WebApi.Proxies.TestProxy.Clients
 	/// </summary>
 	public abstract partial class ClientBase : IDisposable
 	{
-		/// <summary>
-		/// Gests the HttpClient.
-		/// </summary>
-		public HttpClient HttpClient { get; protected set; }
+        public string ServiceName { get; protected set; }
+
+        /// <summary>
+        /// Gests the HttpClient.
+        /// </summary>
+        public HttpClient HttpClient { get; protected set; }
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="ClientBase"/> class.
 		/// </summary>
 		protected ClientBase()
 		{
-			HttpClient = new HttpClient()
-			{
-				BaseAddress = new Uri(Configuration.TestProxyBaseAddress)
-			};
-
 			SerializationSettings = new JsonSerializerSettings
             {
                 NullValueHandling = NullValueHandling.Ignore,
@@ -286,6 +284,11 @@ namespace WebApi.Proxies.TestProxy.Clients
 		}
 
         public JsonSerializerSettings SerializationSettings;
+
+	    protected void RepairTraefikService()
+	    {
+	        
+	    }
 
 		
 		/// <summary>
@@ -324,19 +327,6 @@ namespace WebApi.Proxies.TestProxy.Clients
 	        return urlTpl;
 	    }
 
-		
-		/// <summary>
-		/// Initializes a new instance of the <see cref="ClientBase"/> class.
-		/// </summary>
-		/// <param name="handler">The handler.</param>
-		/// <param name="disposeHandler">if set to <c>true</c> [dispose handler].</param>
-		protected ClientBase(HttpMessageHandler handler, bool disposeHandler = true)
-		{
-			HttpClient = new HttpClient(handler, disposeHandler)
-			{
-				BaseAddress = new Uri(Configuration.TestProxyBaseAddress)
-			};
-		}
 
 
 		/// <summary>
@@ -394,74 +384,33 @@ namespace WebApi.Proxies.TestProxy.Clients
 	}
 
 	/// <summary>
-	/// Helper class to access all clients at once
-	/// </summary>
-	public partial class WebApiClients
-	{
-		public TestClient Test { get; private set; }
-		
-        protected IEnumerable<Interfaces.IClientBase> Clients
-        {
-            get
-            {
-				yield return Test;
-            }
-        }
-
-		public WebApiClients(Uri baseAddress = null)
-		{
-            if (baseAddress != null)
-                Configuration.TestProxyBaseAddress = baseAddress.AbsoluteUri;
-
-			Test = new TestClient();
-		}
-
-        public void SetAuthentication(AuthenticationHeaderValue auth)
-        {
-            foreach (var client in Clients)
-                client.HttpClient.DefaultRequestHeaders.Authorization = auth;
-        }
-		
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                foreach (var client in Clients)
-                    client.Dispose();
-            }
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-		~WebApiClients() 
-		{
-            Dispose(false);
-		}
-	}
-
-	/// <summary>
 	/// 
 	/// </summary>
 	public partial class TestClient : ClientBase, Interfaces.ITestClient
-	{		
+	{
 
-		/// <summary>
-		/// 
-		/// </summary>
-		public TestClient() : base()
-		{
-		}
+        /// <summary>
+        /// 
+        /// </summary>
+        public TestClient()
+        {
+            HttpClient = new HttpClient()
+            {
+                BaseAddress = new Uri(BaseAddressInfo.GetAddress(ServiceName))
+            };
 
-		/// <summary>
-		/// 
-		/// </summary>
-		public TestClient(HttpMessageHandler handler, bool disposeHandler = true) : base(handler, disposeHandler)
+        }
+
+	    /// <summary>
+        /// 
+        /// </summary>
+        public TestClient(HttpMessageHandler handler, bool disposeHandler = true) 
 		{
-		}
+            HttpClient = new HttpClient(handler,disposeHandler)
+            {
+                BaseAddress = new Uri(BaseAddressInfo.GetAddress(ServiceName))
+            };
+        }
 
 		#region Methods
 
@@ -493,9 +442,17 @@ namespace WebApi.Proxies.TestProxy.Clients
 			{
 				requestUrl = requestUrl + "?" + queryHasParamUrl + "&" + queryNoParamUrl;
 			}
-            
-	
-			var result = await HttpClient.GetAsync(requestUrl );
+
+		    HttpResponseMessage result;
+		    try
+		    {
+                result = await HttpClient.GetAsync(requestUrl);
+            }
+            catch (SocketException)
+            {
+                BaseAddressInfo.TryReportTraefikError(ServiceName);
+		        throw;
+		    }
 		
 
 			EnsureSuccess(result);

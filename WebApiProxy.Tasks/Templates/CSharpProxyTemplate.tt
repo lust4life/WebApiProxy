@@ -23,36 +23,6 @@ using Newtonsoft.Json;
 using WebApiProxy.Tasks.Models;
 using <#= Configuration.Namespace#>.Models;
 
-
-#region Proxies
-namespace <#= Configuration.Namespace#>
-{
-	/// <summary>
-	/// Client configuration.
-	/// </summary>
-	public static partial class Configuration
-	{
-		/// <summary>
-		/// Web Api Base Address.
-		/// </summary>
-		public static string <#= Configuration.Name #>BaseAddress
-		{
-	        get
-	        {
-	            string address;
-	            BaseAddressInfo.Infos.TryGetValue(ServiceName, out address);
-	            return string.IsNullOrEmpty(address) ? OriginBaseAddr : address;
-	        }
-	    } 
-
-		
-	    public static string OriginBaseAddr = "<#= MetaData.Host #>";
-
-		public static string ServiceName = "<#= Configuration.Name #>";
-	}
-}
-#endregion
-
 #region Models
 namespace <#= Configuration.Namespace#>.Models
 {
@@ -172,6 +142,8 @@ namespace <#= Configuration.Namespace#>.Clients
 	/// </summary>
 	public abstract partial class ClientBase : IDisposable
 	{
+        public string ServiceName { get; protected set; }
+
 		/// <summary>
 		/// Gests the HttpClient.
 		/// </summary>
@@ -182,11 +154,6 @@ namespace <#= Configuration.Namespace#>.Clients
 		/// </summary>
 		protected ClientBase()
 		{
-			HttpClient = new HttpClient()
-			{
-				BaseAddress = new Uri(Configuration.<#= Configuration.Name #>BaseAddress)
-			};
-
 			SerializationSettings = new JsonSerializerSettings
             {
                 NullValueHandling = NullValueHandling.Ignore,
@@ -232,21 +199,6 @@ namespace <#= Configuration.Namespace#>.Clients
                              }));
 	        return urlTpl;
 	    }
-
-		
-		/// <summary>
-		/// Initializes a new instance of the <see cref="ClientBase"/> class.
-		/// </summary>
-		/// <param name="handler">The handler.</param>
-		/// <param name="disposeHandler">if set to <c>true</c> [dispose handler].</param>
-		protected ClientBase(HttpMessageHandler handler, bool disposeHandler = true)
-		{
-			HttpClient = new HttpClient(handler, disposeHandler)
-			{
-				BaseAddress = new Uri(Configuration.<#= Configuration.Name #>BaseAddress)
-			};
-		}
-
 
 		/// <summary>
 		/// Encode the input parameter as a string
@@ -302,62 +254,6 @@ namespace <#= Configuration.Namespace#>.Clients
 		}
 	}
 
-	/// <summary>
-	/// Helper class to access all clients at once
-	/// </summary>
-	public partial class WebApiClients
-	{
-<# foreach(var definition in MetaData.Definitions) { #>
-		public <#=definition.Name#><#= Configuration.ClientSuffix#> <#= definition.Name #> { get; private set; }
-<# } #>
-		
-        protected IEnumerable<Interfaces.IClientBase> Clients
-        {
-            get
-            {
-<# foreach(var definition in MetaData.Definitions) { #>
-				yield return <#= definition.Name #>;
-<# } #>
-            }
-        }
-
-		public WebApiClients(Uri baseAddress = null)
-		{
-            if (baseAddress != null)
-                Configuration.OriginBaseAddr = baseAddress.AbsoluteUri;
-
-<# foreach(var definition in MetaData.Definitions) { #>
-			<#= definition.Name #> = new <#=definition.Name#><#= Configuration.ClientSuffix#>();
-<# } #>
-		}
-
-        public void SetAuthentication(AuthenticationHeaderValue auth)
-        {
-            foreach (var client in Clients)
-                client.HttpClient.DefaultRequestHeaders.Authorization = auth;
-        }
-		
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                foreach (var client in Clients)
-                    client.Dispose();
-            }
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-		~WebApiClients() 
-		{
-            Dispose(false);
-		}
-	}
-
 <# foreach(var definition in MetaData.Definitions) { #>
 	/// <summary>
 	/// <#= definition.Description.ToSummary() #>
@@ -370,6 +266,10 @@ namespace <#= Configuration.Namespace#>.Clients
 		/// </summary>
 		public <#=definition.Name#><#= Configuration.ClientSuffix#>() : base()
 		{
+			HttpClient = new HttpClient()
+            {
+                BaseAddress = new Uri(BaseAddressInfo.GetAddress(ServiceName))
+            };
 		}
 
 		/// <summary>
@@ -377,6 +277,10 @@ namespace <#= Configuration.Namespace#>.Clients
 		/// </summary>
 		public <#=definition.Name#><#= Configuration.ClientSuffix#>(HttpMessageHandler handler, bool disposeHandler = true) : base(handler, disposeHandler)
 		{
+			HttpClient = new HttpClient(handler,disposeHandler)
+            {
+                BaseAddress = new Uri(BaseAddressInfo.GetAddress(ServiceName))
+            };
 		}
 
 		#region Methods
@@ -498,9 +402,20 @@ namespace <#= Configuration.Namespace#>.Clients
             
 	<# } #>
 
-			var result = await HttpClient.<#=method.Type.ToTitle()#><#= postOrPutOrPatch ? "AsJson" : "" #>Async<#= postOrPutOrPatch && method.BodyParameter != null ? "<" + method.BodyParameter.Type + ">" : "" #>(requestUrl <#= postOrPutOrPatch ? bodyParameterString:""#>);
+			HttpResponseMessage result;
+		    try
+		    {
+				result = await HttpClient.<#=method.Type.ToTitle()#><#= postOrPutOrPatch ? "AsJson" : "" #>Async<#= postOrPutOrPatch && method.BodyParameter != null ? "<" + method.BodyParameter.Type + ">" : "" #>(requestUrl <#= postOrPutOrPatch ? bodyParameterString:""#>);
+            }
+            catch (AggregateException ex)
+            {
+				if(ex.GetBaseException() is SocketException)
+				{
+					BaseAddressInfo.TryReportTraefikError(ServiceName);
+				}
+		        throw;
+		    }
 		
-
 			EnsureSuccess(result);
 				 
 			return await result.Content.ReadAsAsync<<#= concreteReturnType #>>();
@@ -546,7 +461,19 @@ namespace <#= Configuration.Namespace#>.Clients
             
 	<# } #>
 
-			return await HttpClient.<#=method.Type.ToTitle()#><#= postOrPutOrPatch ? "AsJson" : "" #>Async<#= postOrPutOrPatch && method.BodyParameter != null ? "<" + method.BodyParameter.Type + ">" : "" #>(requestUrl <#= postOrPutOrPatch ? bodyParameterString:""#>);
+		    try
+		    {
+				return await HttpClient.<#=method.Type.ToTitle()#><#= postOrPutOrPatch ? "AsJson" : "" #>Async<#= postOrPutOrPatch && method.BodyParameter != null ? "<" + method.BodyParameter.Type + ">" : "" #>(requestUrl <#= postOrPutOrPatch ? bodyParameterString:""#>);
+            }
+            catch (AggregateException ex)
+            {
+				if(ex.GetBaseException() is SocketException)
+				{
+					BaseAddressInfo.TryReportTraefikError(ServiceName);
+				}
+
+				throw;
+			}
 		}
 
 <# } #>

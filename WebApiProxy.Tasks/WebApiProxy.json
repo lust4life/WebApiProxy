@@ -1,6 +1,6 @@
 ﻿{
   "GenerateAsyncReturnTypes": true,
-  "ConsulEndpoint": "http://192.168.200.22:8500/",
+  "ConsulEndpointForGenerateFile": "http://192.168.200.22:8500/",
   "Services": [
     {
       "Name": "Foo",

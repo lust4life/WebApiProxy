@@ -9,12 +9,8 @@ namespace WebApiProxy.Api.Sample.Controllers
         {
             ViewBag.Title = "Home Page";
 
-            var task = new ProxyGenerationTask()
-                       {
-                           Root = Server.MapPath("~/ProxiesFiles")
-            };
-            var res = task.Execute();
-
+            var task = new ProxyGenerationTask(Server.MapPath("~/ProxiesFiles"));
+            task.Generate();
 
             return Content("generate done!");
         }

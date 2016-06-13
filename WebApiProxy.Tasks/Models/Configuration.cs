@@ -1,38 +1,15 @@
-﻿using System.IO;
-using System.Xml.Serialization;
-
-namespace WebApiProxy.Tasks.Models
+﻿namespace WebApiProxy.Tasks.Models
 {
-    [XmlRoot("proxy")]
     public class Configuration
     {
-        public const string ConfigFileName = "WebApiProxy.config";
         public const string JsonConfigFileName = "WebApiProxy.json";
 
         private string _clientSuffix = "Client";
-        private string _name = "MyWebApiProxy";
-        private bool _generateOnBuild = false;
-        private string _namespace = "WebApi.Proxies";
-        private bool _generateAsyncReturnTypes = false;
 
-        [XmlIgnore]
-        public string ConsulEndpoint { get; set; }  
+        public string ConsulEndpointForGenerateFile { get; set; }
 
+        public bool NotUseTraefik { get; set; }
 
-        [XmlAttribute("generateOnBuild")]
-        public bool GenerateOnBuild
-        {
-            get
-            {
-                return this._generateOnBuild;
-            }
-            set
-            {
-                this._generateOnBuild = value;
-            }
-        }
-
-        [XmlAttribute("clientSuffix")]
         public string ClientSuffix
         {
             get
@@ -45,66 +22,13 @@ namespace WebApiProxy.Tasks.Models
             }
         }
 
-        [XmlAttribute("namespace")]
-        public string Namespace
-        {
-            get
-            {
-                return this._namespace;
-            }
-            set
-            {
-                this._namespace = value;
-            }
-        }
+        public string Namespace { get; set; } = "WebApi.Proxies";
 
-        [XmlAttribute("name")]
-        public string Name
-        {
-            get
-            {
-                return this._name;
-            }
-            set
-            {
-                this._name = value;
-            }
-        }
+        public string Name { get; set; } = "MyWebApiProxy";
 
-        [XmlAttribute("endpoint")]
         public string Endpoint { get; set; }
 
-        [XmlAttribute("generateAsyncReturnTypes")]
-        public bool GenerateAsyncReturnTypes
-        {
-            get
-            {
-                return _generateAsyncReturnTypes;
-            }
-            set
-            {
-                _generateAsyncReturnTypes = value;
-            }
-        }
-
-
-        public static Configuration Load(string root)
-        {
-            var fileName = root + Configuration.ConfigFileName;
-
-            if (!File.Exists(fileName))
-            {
-                throw new ConfigFileNotFoundException(fileName);
-            }
-
-            var serializer = new XmlSerializer(typeof(Configuration), new XmlRootAttribute("proxy"));
-            var reader = new StreamReader(fileName);
-            var config = (Configuration)serializer.Deserialize(reader);
-            reader.Close();
-
-            return config;
-
-        }
+        public bool GenerateAsyncReturnTypes { get; set; }
 
     }
 

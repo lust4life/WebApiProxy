@@ -5,8 +5,7 @@ namespace WebApiProxy.Tasks.Models
 {
     public class GenerateConfig
     {
-        public string ConsulEndpoint { get; set; }
-        public bool GenerateOnBuild { get; set; }
+        public string ConsulEndpointForGenerateFile { get; set; }
         public bool GenerateAsyncReturnTypes { get; set; }
 
         public IEnumerable<ServiceConfig> Services { get; set; }
@@ -24,8 +23,7 @@ namespace WebApiProxy.Tasks.Models
             public string Name { get; set; }
 
             public string ClientSuffix { get; set; }
-
-            public bool IncludeValidation { get; set; }
+            public bool NotUseTraefik { get; set; }
             public bool EnsureSuccess { get; set; }
         }
 
@@ -34,9 +32,9 @@ namespace WebApiProxy.Tasks.Models
         {
             return Services.Select(service => new Configuration
                                               {
-                                                  ConsulEndpoint = ConsulEndpoint,
-                                                  GenerateOnBuild = true,
+                                                  ConsulEndpointForGenerateFile = ConsulEndpointForGenerateFile,
                                                   GenerateAsyncReturnTypes = GenerateAsyncReturnTypes,
+                                                  NotUseTraefik = service.NotUseTraefik,
                                                   Endpoint = service.ProxyEndpoint,
                                                   ClientSuffix = service.ClientSuffix,
                                                   Namespace = service.Namespace,
