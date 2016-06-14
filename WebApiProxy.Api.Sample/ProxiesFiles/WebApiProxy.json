@@ -3,13 +3,8 @@
   "ConsulEndpointForGenerateFile": "http://192.168.200.22:8500/",
   "Services": [
     {
-      "Name": "Foo",
-      "Namespace": "WebApi.Proxies.Foo",
-      "ClientSuffix": "Client"
-    },
-    {
-      "Name": "Bar",
-      "Namespace": "WebApi.Proxies.Bar",
+      "Name": "jiajun",
+      "Namespace": "WebApi.Proxies.Jiajun",
       "ClientSuffix": "Client"
     }
   ]

@@ -73,7 +73,7 @@ namespace WebApiProxy.Tasks.Models
             this.Write("\"] = ");
             
             #line 36 "E:\git\uoko\web.api.proxy\WebApiProxy.Tasks\Templates\ProxyBaseInfoTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(!service.NotUseTraefik));
+            this.Write(this.ToStringHelper.ToStringWithCulture(!service.NotUseTraefik ? "true" : "false"));
             
             #line default
             #line hidden

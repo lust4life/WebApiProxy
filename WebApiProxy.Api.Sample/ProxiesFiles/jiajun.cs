@@ -10,35 +10,14 @@
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using System.Net.Http.Formatting;
 using System.Linq;
-using System.Net;
-using System.Web;
 using Newtonsoft.Json;
 using WebApiProxy.Tasks.Models;
-using WebApi.Proxies.AnotherTestProxy.Models;
-
-
-#region Proxies
-namespace WebApi.Proxies.AnotherTestProxy
-{
-	/// <summary>
-	/// Client configuration.
-	/// </summary>
-	public static partial class Configuration
-	{
-		/// <summary>
-		/// Web Api Base Address.
-		/// </summary>
-		public static string AnotherTestProxyBaseAddress = "http://localhost:12016/";
-	}
-}
-#endregion
+using WebApi.Proxies.Jiajun.Models;
 
 #region Models
-namespace WebApi.Proxies.AnotherTestProxy.Models
+namespace WebApi.Proxies.Jiajun.Models
 {
 
 	
@@ -127,7 +106,7 @@ namespace WebApi.Proxies.AnotherTestProxy.Models
 #endregion
 
 #region Interfaces
-namespace WebApi.Proxies.AnotherTestProxy.Interfaces
+namespace WebApi.Proxies.Jiajun.Interfaces
 {
 	public interface IClientBase : IDisposable
 	{
@@ -256,13 +235,15 @@ namespace WebApi.Proxies.AnotherTestProxy.Interfaces
 #endregion
 
 #region Clients
-namespace WebApi.Proxies.AnotherTestProxy.Clients
+namespace WebApi.Proxies.Jiajun.Clients
 {
 	/// <summary>
 	/// Client base class.
 	/// </summary>
 	public abstract partial class ClientBase : IDisposable
 	{
+        public string ServiceName { get; protected set; }
+
 		/// <summary>
 		/// Gests the HttpClient.
 		/// </summary>
@@ -273,11 +254,6 @@ namespace WebApi.Proxies.AnotherTestProxy.Clients
 		/// </summary>
 		protected ClientBase()
 		{
-			HttpClient = new HttpClient()
-			{
-				BaseAddress = new Uri(Configuration.AnotherTestProxyBaseAddress)
-			};
-
 			SerializationSettings = new JsonSerializerSettings
             {
                 NullValueHandling = NullValueHandling.Ignore,
@@ -323,21 +299,6 @@ namespace WebApi.Proxies.AnotherTestProxy.Clients
                              }));
 	        return urlTpl;
 	    }
-
-		
-		/// <summary>
-		/// Initializes a new instance of the <see cref="ClientBase"/> class.
-		/// </summary>
-		/// <param name="handler">The handler.</param>
-		/// <param name="disposeHandler">if set to <c>true</c> [dispose handler].</param>
-		protected ClientBase(HttpMessageHandler handler, bool disposeHandler = true)
-		{
-			HttpClient = new HttpClient(handler, disposeHandler)
-			{
-				BaseAddress = new Uri(Configuration.AnotherTestProxyBaseAddress)
-			};
-		}
-
 
 		/// <summary>
 		/// Encode the input parameter as a string
@@ -394,56 +355,6 @@ namespace WebApi.Proxies.AnotherTestProxy.Clients
 	}
 
 	/// <summary>
-	/// Helper class to access all clients at once
-	/// </summary>
-	public partial class WebApiClients
-	{
-		public TestClient Test { get; private set; }
-		
-        protected IEnumerable<Interfaces.IClientBase> Clients
-        {
-            get
-            {
-				yield return Test;
-            }
-        }
-
-		public WebApiClients(Uri baseAddress = null)
-		{
-            if (baseAddress != null)
-                Configuration.AnotherTestProxyBaseAddress = baseAddress.AbsoluteUri;
-
-			Test = new TestClient();
-		}
-
-        public void SetAuthentication(AuthenticationHeaderValue auth)
-        {
-            foreach (var client in Clients)
-                client.HttpClient.DefaultRequestHeaders.Authorization = auth;
-        }
-		
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                foreach (var client in Clients)
-                    client.Dispose();
-            }
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-		~WebApiClients() 
-		{
-            Dispose(false);
-		}
-	}
-
-	/// <summary>
 	/// 
 	/// </summary>
 	public partial class TestClient : ClientBase, Interfaces.ITestClient
@@ -452,15 +363,27 @@ namespace WebApi.Proxies.AnotherTestProxy.Clients
 		/// <summary>
 		/// 
 		/// </summary>
-		public TestClient() : base()
+		public TestClient()
 		{
+			ServiceName = "jiajun";
+
+			HttpClient = new HttpClient()
+            {
+                BaseAddress = new Uri(BaseAddressInfo.GetAddress(ServiceName))
+            };
 		}
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public TestClient(HttpMessageHandler handler, bool disposeHandler = true) : base(handler, disposeHandler)
+		public TestClient(HttpMessageHandler handler, bool disposeHandler = true)
 		{
+			ServiceName = "jiajun";
+
+			HttpClient = new HttpClient(handler,disposeHandler)
+            {
+                BaseAddress = new Uri(BaseAddressInfo.GetAddress(ServiceName))
+            };
 		}
 
 		#region Methods
@@ -495,9 +418,20 @@ namespace WebApi.Proxies.AnotherTestProxy.Clients
 			}
             
 	
-			var result = await HttpClient.GetAsync(requestUrl );
+			HttpResponseMessage result;
+		    try
+		    {
+				result = await HttpClient.GetAsync(requestUrl );
+            }
+            catch (AggregateException ex)
+            {
+				if(ex.GetBaseException() is System.Net.Sockets.SocketException)
+				{
+					BaseAddressInfo.TryReportTraefikError(ServiceName);
+				}
+		        throw;
+		    }
 		
-
 			EnsureSuccess(result);
 				 
 			return await result.Content.ReadAsAsync<GenericBase<String>>();
@@ -547,9 +481,20 @@ namespace WebApi.Proxies.AnotherTestProxy.Clients
 			}
             
 	
-			var result = await HttpClient.GetAsync(requestUrl );
+			HttpResponseMessage result;
+		    try
+		    {
+				result = await HttpClient.GetAsync(requestUrl );
+            }
+            catch (AggregateException ex)
+            {
+				if(ex.GetBaseException() is System.Net.Sockets.SocketException)
+				{
+					BaseAddressInfo.TryReportTraefikError(ServiceName);
+				}
+		        throw;
+		    }
 		
-
 			EnsureSuccess(result);
 				 
 			return await result.Content.ReadAsAsync<ComplexModel>();
@@ -615,9 +560,20 @@ namespace WebApi.Proxies.AnotherTestProxy.Clients
 			}
             
 	
-			var result = await HttpClient.GetAsync(requestUrl );
+			HttpResponseMessage result;
+		    try
+		    {
+				result = await HttpClient.GetAsync(requestUrl );
+            }
+            catch (AggregateException ex)
+            {
+				if(ex.GetBaseException() is System.Net.Sockets.SocketException)
+				{
+					BaseAddressInfo.TryReportTraefikError(ServiceName);
+				}
+		        throw;
+		    }
 		
-
 			EnsureSuccess(result);
 				 
 			return await result.Content.ReadAsAsync<NestedModel>();
@@ -685,9 +641,20 @@ namespace WebApi.Proxies.AnotherTestProxy.Clients
 			}
             
 	
-			var result = await HttpClient.PostAsJsonAsync<ComplexModel>(requestUrl , bodyComplexArg);
+			HttpResponseMessage result;
+		    try
+		    {
+				result = await HttpClient.PostAsJsonAsync<ComplexModel>(requestUrl , bodyComplexArg);
+            }
+            catch (AggregateException ex)
+            {
+				if(ex.GetBaseException() is System.Net.Sockets.SocketException)
+				{
+					BaseAddressInfo.TryReportTraefikError(ServiceName);
+				}
+		        throw;
+		    }
 		
-
 			EnsureSuccess(result);
 				 
 			return await result.Content.ReadAsAsync<TotalResult>();
@@ -741,9 +708,20 @@ namespace WebApi.Proxies.AnotherTestProxy.Clients
 			}
             
 	
-			var result = await HttpClient.PostAsJsonAsync<NestedModel>(requestUrl , bodyNestedArg);
+			HttpResponseMessage result;
+		    try
+		    {
+				result = await HttpClient.PostAsJsonAsync<NestedModel>(requestUrl , bodyNestedArg);
+            }
+            catch (AggregateException ex)
+            {
+				if(ex.GetBaseException() is System.Net.Sockets.SocketException)
+				{
+					BaseAddressInfo.TryReportTraefikError(ServiceName);
+				}
+		        throw;
+		    }
 		
-
 			EnsureSuccess(result);
 				 
 			return await result.Content.ReadAsAsync<TotalResult>();
@@ -795,7 +773,19 @@ namespace WebApi.Proxies.AnotherTestProxy.Clients
 		    var requestUrl = "api/Test/"+Uri.EscapeUriString(Convert.ToString(id))+"";
 
 	
-			return await HttpClient.PutAsJsonAsync<String>(requestUrl , value);
+		    try
+		    {
+				return await HttpClient.PutAsJsonAsync<String>(requestUrl , value);
+            }
+            catch (AggregateException ex)
+            {
+				if(ex.GetBaseException() is System.Net.Sockets.SocketException)
+				{
+					BaseAddressInfo.TryReportTraefikError(ServiceName);
+				}
+
+				throw;
+			}
 		}
 
 
@@ -829,7 +819,19 @@ namespace WebApi.Proxies.AnotherTestProxy.Clients
 		    var requestUrl = "api/Test/"+Uri.EscapeUriString(Convert.ToString(id))+"";
 
 	
-			return await HttpClient.DeleteAsync(requestUrl );
+		    try
+		    {
+				return await HttpClient.DeleteAsync(requestUrl );
+            }
+            catch (AggregateException ex)
+            {
+				if(ex.GetBaseException() is System.Net.Sockets.SocketException)
+				{
+					BaseAddressInfo.TryReportTraefikError(ServiceName);
+				}
+
+				throw;
+			}
 		}
 
 

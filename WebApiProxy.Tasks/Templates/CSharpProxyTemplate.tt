@@ -16,7 +16,6 @@
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using System.Linq;
 using Newtonsoft.Json;
@@ -264,8 +263,10 @@ namespace <#= Configuration.Namespace#>.Clients
 		/// <summary>
 		/// <#= definition.Description.ToSummary() #>
 		/// </summary>
-		public <#=definition.Name#><#= Configuration.ClientSuffix#>() : base()
+		public <#=definition.Name#><#= Configuration.ClientSuffix#>()
 		{
+			ServiceName = "<#= Configuration.Name #>";
+
 			HttpClient = new HttpClient()
             {
                 BaseAddress = new Uri(BaseAddressInfo.GetAddress(ServiceName))
@@ -275,8 +276,10 @@ namespace <#= Configuration.Namespace#>.Clients
 		/// <summary>
 		/// <#= definition.Description.ToSummary() #>
 		/// </summary>
-		public <#=definition.Name#><#= Configuration.ClientSuffix#>(HttpMessageHandler handler, bool disposeHandler = true) : base(handler, disposeHandler)
+		public <#=definition.Name#><#= Configuration.ClientSuffix#>(HttpMessageHandler handler, bool disposeHandler = true)
 		{
+			ServiceName = "<#= Configuration.Name #>";
+
 			HttpClient = new HttpClient(handler,disposeHandler)
             {
                 BaseAddress = new Uri(BaseAddressInfo.GetAddress(ServiceName))
@@ -409,7 +412,7 @@ namespace <#= Configuration.Namespace#>.Clients
             }
             catch (AggregateException ex)
             {
-				if(ex.GetBaseException() is SocketException)
+				if(ex.GetBaseException() is System.Net.Sockets.SocketException)
 				{
 					BaseAddressInfo.TryReportTraefikError(ServiceName);
 				}
@@ -467,7 +470,7 @@ namespace <#= Configuration.Namespace#>.Clients
             }
             catch (AggregateException ex)
             {
-				if(ex.GetBaseException() is SocketException)
+				if(ex.GetBaseException() is System.Net.Sockets.SocketException)
 				{
 					BaseAddressInfo.TryReportTraefikError(ServiceName);
 				}
