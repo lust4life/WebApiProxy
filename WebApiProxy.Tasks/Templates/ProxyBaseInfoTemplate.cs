@@ -93,39 +93,38 @@ namespace WebApiProxy.Tasks.Models
                     "             var traefikInfo = ConsulHelper.DiscoveryService(ConsulUri, ConsulHe" +
                     "lper.TraefikServiceName);\r\n                if (traefikInfo != null)\r\n           " +
                     "     {\r\n                    TraefikAddress = String.Format(\"http://{0}:{1}/\",\r\n " +
-                    "                                                  traefikInfo.ServiceName,\r\n    " +
-                    "                                               traefikInfo.Port);\r\n             " +
-                    "       return string.Format(\"{0}/go-{1}/\", TraefikAddress, serviceName);\r\n      " +
-                    "          }\r\n\r\n                // 说明 traefik 不可用，则获取原始信息，提供降级服务\r\n               " +
-                    " var serviceInfo = ConsulHelper.DiscoveryService(ConsulUri, serviceName);\r\n     " +
-                    "           if (serviceInfo != null)\r\n                {\r\n                    retu" +
-                    "rn String.Format(\"http://{0}:{1}/\",\r\n                                         se" +
-                    "rviceInfo.ServiceName,\r\n                                         serviceInfo.Por" +
-                    "t);\r\n                }\r\n\r\n                return null;\r\n            }\r\n         " +
-                    "   else\r\n            {\r\n                string address;\r\n                Address" +
-                    "Infos.TryGetValue(serviceName, out address);\r\n                return address;\r\n " +
-                    "           }\r\n        }\r\n\r\n        public virtual void LoadAddressInfo()\r\n      " +
-                    "  {\r\n            if (string.IsNullOrEmpty(TraefikAddress))\r\n            {\r\n     " +
-                    "           var traefikInfo = ConsulHelper.DiscoveryService(ConsulUri, ConsulHelp" +
-                    "er.TraefikServiceName);\r\n                if (traefikInfo != null)\r\n             " +
-                    "   {\r\n                    TraefikAddress = String.Format(\"http://{0}:{1}/\",\r\n   " +
-                    "                                                traefikInfo.ServiceName,\r\n      " +
-                    "                                             traefikInfo.Port);\r\n               " +
-                    " }\r\n            }\r\n\r\n            foreach (var serviceUseTraefik in ServiceDic)\r\n" +
-                    "            {\r\n                var serviceName = serviceUseTraefik.Key;\r\n       " +
-                    "         var isServiceUseTraefik = serviceUseTraefik.Value;\r\n\r\n                i" +
-                    "f (!isServiceUseTraefik)\r\n                {\r\n                    var serviceInfo" +
-                    " = ConsulHelper.DiscoveryService(ConsulUri, serviceName);\r\n                    i" +
-                    "f (serviceInfo == null)\r\n                    {\r\n                        throw ne" +
-                    "w Exception(String.Format(\"consul 中没有 {0} 可用信息\", serviceName));\r\n               " +
-                    "     }\r\n\r\n                    AddressInfos[serviceName] = String.Format(\"http://" +
-                    "{0}:{1}/\", serviceInfo.ServiceName,\r\n                                           " +
-                    "                   serviceInfo.Port);\r\n                }\r\n            }\r\n       " +
-                    " }\r\n\r\n        public static void TryReportTraefikError(string serviceName)\r\n    " +
-                    "    {\r\n            bool serviceUseTraefik;\r\n            ServiceDic.TryGetValue(s" +
-                    "erviceName, out serviceUseTraefik);\r\n            if (serviceUseTraefik)\r\n       " +
-                    "     {\r\n                TraefikAddress = null;\r\n            }\r\n        }\r\n    }\r" +
-                    "\n}");
+                    "                                                  traefikInfo.Address,\r\n        " +
+                    "                                           traefikInfo.Port);\r\n                 " +
+                    "   return string.Format(\"{0}/go-{1}/\", TraefikAddress, serviceName);\r\n          " +
+                    "      }\r\n\r\n                // 说明 traefik 不可用，则获取原始信息，提供降级服务\r\n                var" +
+                    " serviceInfo = ConsulHelper.DiscoveryService(ConsulUri, serviceName);\r\n         " +
+                    "       if (serviceInfo != null)\r\n                {\r\n                    return S" +
+                    "tring.Format(\"http://{0}:{1}/\",\r\n                                         servic" +
+                    "eInfo.Address,\r\n                                         serviceInfo.Port);\r\n   " +
+                    "             }\r\n\r\n                return null;\r\n            }\r\n            else\r" +
+                    "\n            {\r\n                string address;\r\n                AddressInfos.Tr" +
+                    "yGetValue(serviceName, out address);\r\n                return address;\r\n         " +
+                    "   }\r\n        }\r\n\r\n        public virtual void LoadAddressInfo()\r\n        {\r\n   " +
+                    "         if (string.IsNullOrEmpty(TraefikAddress))\r\n            {\r\n             " +
+                    "   var traefikInfo = ConsulHelper.DiscoveryService(ConsulUri, ConsulHelper.Traef" +
+                    "ikServiceName);\r\n                if (traefikInfo != null)\r\n                {\r\n  " +
+                    "                  TraefikAddress = String.Format(\"http://{0}:{1}/\",\r\n           " +
+                    "                                        traefikInfo.Address,\r\n                  " +
+                    "                                 traefikInfo.Port);\r\n                }\r\n        " +
+                    "    }\r\n\r\n            foreach (var serviceUseTraefik in ServiceDic)\r\n            " +
+                    "{\r\n                var serviceName = serviceUseTraefik.Key;\r\n                var" +
+                    " isServiceUseTraefik = serviceUseTraefik.Value;\r\n\r\n                if (!isServic" +
+                    "eUseTraefik)\r\n                {\r\n                    var serviceInfo = ConsulHel" +
+                    "per.DiscoveryService(ConsulUri, serviceName);\r\n                    if (serviceIn" +
+                    "fo == null)\r\n                    {\r\n                        throw new Exception(" +
+                    "String.Format(\"consul 中没有 {0} 可用信息\", serviceName));\r\n                    }\r\n\r\n  " +
+                    "                  AddressInfos[serviceName] = String.Format(\"http://{0}:{1}/\", s" +
+                    "erviceInfo.ServiceName,\r\n                                                       " +
+                    "       serviceInfo.Port);\r\n                }\r\n            }\r\n        }\r\n\r\n      " +
+                    "  public static void TryReportTraefikError(string serviceName)\r\n        {\r\n     " +
+                    "       bool serviceUseTraefik;\r\n            ServiceDic.TryGetValue(serviceName, " +
+                    "out serviceUseTraefik);\r\n            if (serviceUseTraefik)\r\n            {\r\n    " +
+                    "            TraefikAddress = null;\r\n            }\r\n        }\r\n    }\r\n}");
             return this.GenerationEnvironment.ToString();
         }
     }

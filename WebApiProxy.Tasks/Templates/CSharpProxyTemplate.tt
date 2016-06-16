@@ -153,6 +153,8 @@ namespace <#= Configuration.Namespace#>.Clients
 		/// </summary>
 		protected ClientBase()
 		{
+			ServiceName = "<#= Configuration.Name #>";
+
 			SerializationSettings = new JsonSerializerSettings
             {
                 NullValueHandling = NullValueHandling.Ignore,
@@ -265,8 +267,6 @@ namespace <#= Configuration.Namespace#>.Clients
 		/// </summary>
 		public <#=definition.Name#><#= Configuration.ClientSuffix#>()
 		{
-			ServiceName = "<#= Configuration.Name #>";
-
 			HttpClient = new HttpClient()
             {
                 BaseAddress = new Uri(BaseAddressInfo.GetAddress(ServiceName))
@@ -278,8 +278,6 @@ namespace <#= Configuration.Namespace#>.Clients
 		/// </summary>
 		public <#=definition.Name#><#= Configuration.ClientSuffix#>(HttpMessageHandler handler, bool disposeHandler = true)
 		{
-			ServiceName = "<#= Configuration.Name #>";
-
 			HttpClient = new HttpClient(handler,disposeHandler)
             {
                 BaseAddress = new Uri(BaseAddressInfo.GetAddress(ServiceName))

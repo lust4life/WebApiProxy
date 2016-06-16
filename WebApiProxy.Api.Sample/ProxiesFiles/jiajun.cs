@@ -254,6 +254,8 @@ namespace WebApi.Proxies.Jiajun.Clients
 		/// </summary>
 		protected ClientBase()
 		{
+			ServiceName = "jiajun";
+
 			SerializationSettings = new JsonSerializerSettings
             {
                 NullValueHandling = NullValueHandling.Ignore,
@@ -365,8 +367,6 @@ namespace WebApi.Proxies.Jiajun.Clients
 		/// </summary>
 		public TestClient()
 		{
-			ServiceName = "jiajun";
-
 			HttpClient = new HttpClient()
             {
                 BaseAddress = new Uri(BaseAddressInfo.GetAddress(ServiceName))
@@ -378,8 +378,6 @@ namespace WebApi.Proxies.Jiajun.Clients
 		/// </summary>
 		public TestClient(HttpMessageHandler handler, bool disposeHandler = true)
 		{
-			ServiceName = "jiajun";
-
 			HttpClient = new HttpClient(handler,disposeHandler)
             {
                 BaseAddress = new Uri(BaseAddressInfo.GetAddress(ServiceName))

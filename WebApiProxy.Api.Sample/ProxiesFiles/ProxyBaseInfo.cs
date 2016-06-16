@@ -48,7 +48,7 @@ namespace WebApiProxy.Tasks.Models
                 if (traefikInfo != null)
                 {
                     TraefikAddress = String.Format("http://{0}:{1}/",
-                                                   traefikInfo.ServiceName,
+                                                   traefikInfo.Address,
                                                    traefikInfo.Port);
                     return string.Format("{0}/go-{1}/", TraefikAddress, serviceName);
                 }
@@ -58,7 +58,7 @@ namespace WebApiProxy.Tasks.Models
                 if (serviceInfo != null)
                 {
                     return String.Format("http://{0}:{1}/",
-                                         serviceInfo.ServiceName,
+                                         serviceInfo.Address,
                                          serviceInfo.Port);
                 }
 
@@ -80,7 +80,7 @@ namespace WebApiProxy.Tasks.Models
                 if (traefikInfo != null)
                 {
                     TraefikAddress = String.Format("http://{0}:{1}/",
-                                                   traefikInfo.ServiceName,
+                                                   traefikInfo.Address,
                                                    traefikInfo.Port);
                 }
             }
