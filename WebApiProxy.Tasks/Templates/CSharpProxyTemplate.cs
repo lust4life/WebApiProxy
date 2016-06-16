@@ -840,7 +840,7 @@ using ");
             
             #line default
             #line hidden
-            this.Write(@");
+            this.Write(@").ConfigureAwait(false);
             }
             catch (AggregateException ex)
             {
@@ -860,7 +860,7 @@ using ");
             
             #line default
             #line hidden
-            this.Write(">();\r\n\t\t}\r\n\r\n");
+            this.Write(">().ConfigureAwait(false);\r\n\t\t}\r\n\r\n");
             
             #line 425 "E:\git\uoko\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
  } else { 
@@ -1008,10 +1008,20 @@ using ");
             
             #line default
             #line hidden
-            this.Write(");\r\n            }\r\n            catch (AggregateException ex)\r\n            {\r\n\t\t\t\t" +
-                    "if(ex.GetBaseException() is System.Net.Sockets.SocketException)\r\n\t\t\t\t{\r\n\t\t\t\t\tBas" +
-                    "eAddressInfo.TryReportTraefikError(ServiceName);\r\n\t\t\t\t}\r\n\r\n\t\t\t\tthrow;\r\n\t\t\t}\r\n\t\t}" +
-                    "\r\n\r\n");
+            this.Write(@").ConfigureAwait(false);
+            }
+            catch (AggregateException ex)
+            {
+				if(ex.GetBaseException() is System.Net.Sockets.SocketException)
+				{
+					BaseAddressInfo.TryReportTraefikError(ServiceName);
+				}
+
+				throw;
+			}
+		}
+
+");
             
             #line 480 "E:\git\uoko\web.api.proxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
  } 
