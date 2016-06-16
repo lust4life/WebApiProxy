@@ -12,7 +12,7 @@
 
 		$task = New-Object WebApiProxy.Tasks.ProxyGenerationTask -ArgumentList ""
 		$task.Root = $root
-		$task.Execute()
+		$task.Generate()
 
 	 } -ArgumentList @($root,$taskPath)
 	 
