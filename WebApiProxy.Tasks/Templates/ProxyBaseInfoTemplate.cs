@@ -52,7 +52,7 @@ namespace WebApiProxy.Tasks.Models
         protected static ConcurrentDictionary<string, string> AddressInfos = new ConcurrentDictionary<string, string>();
         protected static Dictionary<string, bool> ServiceDic = new Dictionary<string, bool>();
 
-        protected BaseAddressInfo(string consulUri)
+        public BaseAddressInfo(string consulUri)
         {
             ConsulUri = consulUri;
 
