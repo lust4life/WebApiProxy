@@ -119,12 +119,12 @@ namespace WebApiProxy.Tasks.Models
                     "fo == null)\r\n                    {\r\n                        throw new Exception(" +
                     "String.Format(\"consul 中没有 {0} 可用信息\", serviceName));\r\n                    }\r\n\r\n  " +
                     "                  AddressInfos[serviceName] = String.Format(\"http://{0}:{1}/\", s" +
-                    "erviceInfo.ServiceName,\r\n                                                       " +
-                    "       serviceInfo.Port);\r\n                }\r\n            }\r\n        }\r\n\r\n      " +
-                    "  public static void TryReportTraefikError(string serviceName)\r\n        {\r\n     " +
-                    "       bool serviceUseTraefik;\r\n            ServiceDic.TryGetValue(serviceName, " +
-                    "out serviceUseTraefik);\r\n            if (serviceUseTraefik)\r\n            {\r\n    " +
-                    "            TraefikAddress = null;\r\n            }\r\n        }\r\n    }\r\n}");
+                    "erviceInfo.Address,\r\n                                                           " +
+                    "   serviceInfo.Port);\r\n                }\r\n            }\r\n        }\r\n\r\n        pu" +
+                    "blic static void TryReportTraefikError(string serviceName)\r\n        {\r\n         " +
+                    "   bool serviceUseTraefik;\r\n            ServiceDic.TryGetValue(serviceName, out " +
+                    "serviceUseTraefik);\r\n            if (serviceUseTraefik)\r\n            {\r\n        " +
+                    "        TraefikAddress = null;\r\n            }\r\n        }\r\n    }\r\n}");
             return this.GenerationEnvironment.ToString();
         }
     }
